@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 for F in *
 do
@@ -10,5 +10,13 @@ do
 	nombre="$(echo $sinextension| tr  " *-." _).$extension"
 	echo "nombre original $F"
 	echo "nombre modificado $nombre"
-	read
+	echo "¿Desea Modificar el archivo?"
+	read respuesta
+	if [ $respuesta = si ];then
+		echo "modifico"
+	else
+		echo "no modifico"
+	fi
+	 
+	
 done
