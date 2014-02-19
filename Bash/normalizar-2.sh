@@ -1,4 +1,29 @@
-#!/bin/bash
+#/bin/bash
+
+echo "Desea Sacar las Peliculas de los Directorios??"
+read respuestav
+if [ $respuestav = si ];then
+	
+	for F in *
+	do
+		if [ -d $F ];then	
+			echo "Desea tratar  $F  ?? si/no"
+			read respuestav2
+			if [ $respuestav2 = si ];then
+				cd $F
+				for F in *
+					if [ -d $F ];then
+						echo "es un subdirectorio se ignora"
+					else
+						mv $F ..
+					fi
+				done
+				cd ..
+			fi
+		fi
+	done	
+
+fi
 
 for F in *
 do
@@ -8,9 +33,11 @@ do
 	sinextension=$(echo $nombre | rev | awk -F "." '{$1="";print}'|rev)
 	sinextension="$(echo $sinextension | sed -e 's/.*\[.*\]//')"
 	nombre="$(echo $sinextension| tr  " *-." _).$extension"
+	echo "-----------"
 	echo "nombre original $F"
 	echo "nombre modificado $nombre"
-	echo "¿Desea Modificar el archivo?"
+	echo "¿Desea Modificar el archivo? si/no"
+	echo "-----------"
 	read respuesta
 	if [ $respuesta = si ];then
 		echo "modifico"
@@ -41,7 +68,8 @@ do
 			echo " 16.	 WESTERN"
 			echo " 17.	 ESPIAS"
 			echo " 18.	 DRAMA"
-
+		echo "-------------------------"
+		echo "Seleccione el Directorio Destino"
 		read tipo
 		case $tipo in
 			1 ) 
