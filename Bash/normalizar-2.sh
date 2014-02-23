@@ -31,7 +31,19 @@ function VaciarDirectorios(){
 echo "Desea Sacar las Peliculas de los Directorios??"
 read respuestav
 if [ $respuestav = si ];then
-	VaciarDirectorios "$(pwd)"	
+	for B in *
+	do
+		if [ -d $B ];then
+			echo "Desea tratar $B??"
+			read res
+			if [ $res = si ]; then
+				cd $B
+				VaciarDirectorios "$(pwd)"
+				cd ..
+			fi
+
+		fi
+	done	
 fi
 
 for F in *
