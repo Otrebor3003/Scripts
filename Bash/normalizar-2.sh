@@ -1,4 +1,15 @@
 #/bin/bash
+function VaciarDirectorios(){
+	for A in *
+	do
+		if [ -d $A ];then
+			cd $A
+			VaciarDirectorios()
+		else
+			mv $A ..
+		fi
+	done
+{
 
 echo "Desea Sacar las Peliculas de los Directorios??"
 read respuestav
