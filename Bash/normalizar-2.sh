@@ -3,12 +3,24 @@ function VaciarDirectorios(){
 	for A in *
 	do
 		if [ -d $A ];then
-			cd $A
-			VaciarDirectorios()
+			if [ "$(ls -A $DIR)" ]; then
+				echo "entro en $A"
+				read
+				cd $A
+				VaciarDirectorios()
+			else	
+				echo "elimino $A"
+				read
+				rmdir $A
+			fi
 		else
 			mv $A ..
 		fi
 	done
+	echo "bajo un nivel"
+	read
+	cd ..
+	return
 {
 
 echo "Desea Sacar las Peliculas de los Directorios??"
