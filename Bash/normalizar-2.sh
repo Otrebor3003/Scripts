@@ -3,49 +3,35 @@ function VaciarDirectorios(){
 	for A in *
 	do
 		if [ -d $A ];then
-			if [ "$(ls -A $DIR)" ]; then
+			if [ "$(ls -A $DIR)" ];then
 				echo "entro en $A"
 				read
 				cd $A
-				VaciarDirectorios()
-			else	
+				VaciarDirectorios "$1"
+			else
 				echo "elimino $A"
 				read
 				rmdir $A
 			fi
 		else
-			mv $A ..
+			echo " $(pwd),,,,$1"
+			if [ "$(pwd)" != "$1" ];then
+				mv $A ..
+			fi
 		fi
 	done
-	echo "bajo un nivel"
-	read
-	cd ..
+	if [ "$(pwd)" != "$1" ];then
+		echo "bajo un nivel"
+		read
+		cd ..
+	fi
 	return
-{
+}
 
 echo "Desea Sacar las Peliculas de los Directorios??"
 read respuestav
 if [ $respuestav = si ];then
-	
-	for F in *
-	do
-		if [ -d $F ];then	
-			echo "Desea tratar  $F  ?? si/no"
-			read respuestav2
-			if [ $respuestav2 = si ];then
-				cd $F
-				for F in *
-					if [ -d $F ];then
-						echo "es un subdirectorio se ignora"
-					else
-						mv $F ..
-					fi
-				done
-				cd ..
-			fi
-		fi
-	done	
-
+	VaciarDirectorios "$(pwd)"	
 fi
 
 for F in *
