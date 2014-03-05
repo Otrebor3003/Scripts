@@ -1,29 +1,45 @@
 #/bin/bash
+#/bin/bash
+
+
 function VaciarDirectorios(){
-	for A in *
+	echo " el argumento es : "$1" y el segundo es "$2""
+	for A in * 
 	do
+		echo "tratando $A"
 		if [ -d $A ];then
-			if [ "$(ls -A $DIR)" ];then
+			echo "Es un directorio"
+			if [ "$(ls -A "$A" )" ];then
 				echo "entro en $A"
 				read
 				cd $A
-				VaciarDirectorios "$1"
+				VaciarDirectorios "$1" "$A"
+				echo "Salida -- tratando $A"
 			else
-				echo "elimino $A"
-				read
-				rmdir $A
+				echo "Desea eliminar $A??"
+				read respuestaE
+				if [ $respuestaE = si ];then
+					rmdir $A
+				fi
 			fi
 		else
-			echo " $(pwd),,,,$1"
+			echo "no es un directorio"
 			if [ "$(pwd)" != "$1" ];then
-				mv $A ..
+				echo "saco el fichero $A"
+				mv "$A" "$1"
 			fi
 		fi
+		echo "termino de tratar $A"
 	done
+	echo "Trato el fin del for"
 	if [ "$(pwd)" != "$1" ];then
-		echo "bajo un nivel"
-		read
-		cd ..
+		echo "Desea eliminar $2"
+		read respuestaE
+		if [ $respuestaE = si ];then	
+			cd ..
+			rmdir $2
+		fi
+		
 	fi
 	return
 }
@@ -36,119 +52,57 @@ if [ $respuestav = si ];then
 		if [ -d $B ];then
 			echo "Desea tratar $B??"
 			read res
-			if [ $res = si ]; then
+			if [ $res = si ];then
+				argumento=$(pwd)
 				cd $B
-				VaciarDirectorios "$(pwd)"
-				cd ..
+				VaciarDirectorios "$argumento" "$B"
 			fi
-
 		fi
 	done	
 fi
 
-for F in *
-do
-	echo $F
-	nombre=$F
-	extension=$(echo $nombre| rev | awk -F "." '{ print $1 }' | rev)
-	sinextension=$(echo $nombre | rev | awk -F "." '{$1="";print}'|rev)
-	sinextension="$(echo $sinextension | sed -e 's/.*\[.*\]//')"
-	nombre="$(echo $sinextension| tr  " *-." _).$extension"
-	echo "-----------"
-	echo "nombre original $F"
-	echo "nombre modificado $nombre"
-	echo "¿Desea Modificar el archivo? si/no"
-	echo "-----------"
-	read respuesta
-	if [ $respuesta = si ];then
-		echo "modifico"
-		mv $F $nombre
-	else
-		echo "no modifico"
-	fi
-	echo " Desea moverlo a algun directorio ?"
-	read respuestad
-	if [ $respuestad = si ];then
-
-			echo " listado "
-			echo " 1.	 ACCION"
-			echo " 2.	 BELICA"
-			echo " 3.	 CFICCION"
-			echo " 4.	 COMEDIA"
-			echo " 5.	 DIBUJOS"
-			echo " 6.	 DOCUMENTAL"
-			echo " 7.	 ESPAÑOLA"
-			echo " 8.	 LUCHA"
-			echo " 9.	 MALA"
-			echo " 10. 	 NUEVA"
-			echo " 11. 	 PINTURA"
-			echo " 12.	 POLICIACA"
-			echo " 13.	 ROMANTICA"
-			echo " 14.	 SUPERHEROES"
-			echo " 15.	 TERROR"
-			echo " 16.	 WESTERN"
-			echo " 17.	 ESPIAS"
-			echo " 18.	 DRAMA"
-		echo "-------------------------"
-		echo "Seleccione el Directorio Destino"
-		read tipo
-		case $tipo in
-			1 ) 
-			mv $nombre ACCION
-			;;
-			2 )
-			 mv $nombre BELICA
-			;;
-			3)
-			 mv $nombre CFICCION
-			;;
-			4)
-			 mv $nombre COMEDIA
-			;;
-			5)
-			 mv $nombre DIBUJOS
-			;;
-			6)
-			 mv $nombre DOCUMENTAL
-			;;
-			7)
-			 mv $nombre ESPAÑOLA
-			;;
-			8)
-			 mv $nombre LUCHA
-			;;
-			9)
-			 mv $nombre MALA
-			;;
-			10)
-			 mv $nombre NUEVA
-			;;
-			11)
-			 mv $nombre PINTURA
-			;;
-			12)
-			 mv $nombre POLICIACA
-			;;
-			13)
-			 mv $nombre ROMANTICA
-			;;
-			14)
-			 mv $nombre SUPERHEROES
-			;;
-			15)
-			 mv $nombre TERROR
-			;;
-			16)
-			 mv $nombre WESTERN
-			;;
-			17)
-			 mv $nombre ESPIAS
-			;;
-			18)
-			 mv $nombre DRAMA
-			;;
-		esac
+echo "Desea Trabajar los nombres de las peliculas"
+read respuestav
+if [ $respuestav = si ];then
+	for F in *
+	do
+		echo $F
+		nombre=$F
+		extension=$(echo $nombre| rev | awk -F "." '{ print $1 }' | rev)
+		sinextension=$(echo $nombre | rev | awk -F "." '{$1="";print}'|rev)
+		sinextension="$(echo $sinextension | sed -e 's/.*\[.*\]//')"
+		nombre="$(echo $sinextension| tr  " *-." _).$extension"
+		echo "-----------"
+		echo "nombre original $F"
+		echo "nombre modificado $nombre"
+		echo "¿Desea Modificar el archivo? si/no"
+		echo "-----------"
+		read respuesta
+		if [ $respuesta = si ];then
+			echo "modifico"
+			mv $F $nombre
+		else
+			echo "no modifico"
+		fi
+		Clasificacion=(ACCION BELICA CFICCION COMEDIA DIBUJOS DOCUMENTAL ESPAÑOLA LUCHA MALA NUEVA PINTURA POLICIACA ROMANTICA SUPERHEROES TERROR WESTERN ESPIAS DRAMA)
+		echo " Desea moverlo a algun directorio ?"
+		read respuestad
+		if [ $respuestad = si ];then
+			let indice=1
+			for i in "${Clasificacion[@]}"
+			do
+				if [ ! -d "$i" ];then
+					mkdir $i
+				fi
+				echo "$indice  .---------.  $i"
+				let indice++
+			done
+			echo "Seleccione el Directorio Destino"
+			read tipo
+			let tipo--
+			mv $F "${Clasificacion[$tipo]}"
 		else
 			echo "no modifico el directorio"
 		fi		 
-done
+	done
+fi
