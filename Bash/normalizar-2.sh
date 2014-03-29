@@ -43,6 +43,14 @@ function VaciarDirectorios(){
 	fi
 	return
 }
+function normalizarNombre(){
+#el argumento es el nombre del fichero que queremos normalizar
+#salvo la extensión.
+	extension=$(echo "$1"| rev | awk -F "." '{print $1}' | rev)
+	echo $extension
+	nombre=$(echo "$1" | rev | awk -F "." '{$1="";print}' | rev )
+	echo $nombre
+}
 
 echo "Desea Sacar las Peliculas de los Directorios??"
 read respuestav
@@ -71,9 +79,7 @@ if [ $respuestav = si ];then
 		if [ ! -d "$F" ];then
 
 			extension=$(echo "$nombre"| rev | awk -F "." '{ print $1 }' | rev)
-			#if [ ! $extension = avi ];then
-			#	extension=avi
-			#:fi
+			
 
 			sinextension=$(echo "$nombre" | rev | awk -F "." '{$1="";print}'|rev)
 			sinextension="$(echo "$sinextension" | sed -e 's/.*\[.*\]//')"
