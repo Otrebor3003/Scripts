@@ -5,7 +5,6 @@ function normalizarNombre(){
 	extension=$(echo "$1"| rev | awk -F "." '{print $1}' | rev)
 	echo $extension
 	nombre=$(echo "$1" | rev | awk -F "." '{$1="";print}' | rev)
-	echo $nombre
 	nombre=$(echo "$nombre"| tr  " *-./]/[" _)
 	nombre=$(echo "$nombre"|sed -e 's/__*/_/g')
 	nombre=$(echo "$nombre"|sed -e 's/_$//g')
@@ -13,6 +12,8 @@ function normalizarNombre(){
 	continuar="si"
 	C=1
 	normalizado=""
+	ncolumnas=$(echo $nombre|awk -F "_" '{print NF}')
+	echo "numero de columnas $ncolumnas"
 	while [ "$continuar" == "si" ];do
 		parte=""
 		parte=$(echo $nombre | awk -F "_" '{print $columna}' "columna=$C")
