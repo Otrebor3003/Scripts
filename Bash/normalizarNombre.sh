@@ -7,16 +7,28 @@ function normalizarNombre(){
 	nombre=$(echo "$1" | rev | awk -F "." '{$1="";print}' | rev)
 	echo $nombre
 	nombre=$(echo "$nombre"| tr  " *-./]/[" _)
+	nombre=$(echo "$nombre"|sed -e 's/__*/_/g')
+	nombre=$(echo "$nombre"|sed -e 's/_$//g')
 	echo "$nombre"
-	echo "numero de columnas que desea mantener"
-	read columnas
-	let C=1
+	continuar="si"
+	C=1
 	normalizado=""
-	while [ $C -lt $columnas ]; do
-		normalizado+=$(awk -F "-" '{print $C _}')
-		
-		let C++
+	while [ "$continuar" == "si" ];do
+		parte=""
+		parte=$(echo $nombre | awk -F "_" '{print $columna}' "columna=$C")
+		echo $parte 
+		echo "Desea mantener esta columna??"
+		read columnas
+		if [ $columnas == "si" ]; then
+			normalizado+="$parte"
+			normalizado+="_"
+			echo $normalizado
+		fi
+		C=$(($C + 1))
+		echo "Desea continuar??"
+		read continuar
 	done
+	normalizado=$(echo "$normalizado"|sed -e 's/_$//g')
 	echo $normalizado
 }
 
