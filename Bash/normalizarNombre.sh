@@ -13,24 +13,35 @@ function normalizarNombre(){
 	C=1
 	normalizado=""
 	ncolumnas=$(echo $nombre|awk -F "_" '{print NF}')
-	echo "numero de columnas $ncolumnas"
-	while [ "$continuar" == "si" ];do
-		parte=""
-		parte=$(echo $nombre | awk -F "_" '{print $columna}' "columna=$C")
-		echo $parte 
-		echo "Desea mantener esta columna??"
-		read columnas
-		if [ $columnas == "si" ]; then
-			normalizado+="$parte"
-			normalizado+="_"
-			echo $normalizado
-		fi
-		C=$(($C + 1))
-		echo "Desea continuar??"
-		read continuar
-	done
-	normalizado=$(echo "$normalizado"|sed -e 's/_$//g')
-	echo $normalizado
+	if [ $ncolumnas -gt 1 ];then
+		while [[ "$continuar" == "si" && $C -le $ncolumnas ]];do
+			parte=""
+			parte=$(echo $nombre | awk -F "_" '{print $columna}' "columna=$C")
+			echo $parte 
+			echo "Desea mantener esta columna??"
+			read columnas
+			if [ $columnas == "si" ]; then
+				normalizado+="$parte"
+				normalizado+="_"
+				echo $normalizado
+			fi
+			C=$(($C + 1))
+			if [ $C -lt $ncolumnas ];then
+				echo "Desea continuar??"
+				read continuar
+			fi
+		done
+		normalizado=$(echo "$normalizado"|sed -e 's/_$//g')
+	else
+		normalizado=$nombre
+	fi
+	echo "resultado final: $normalizado.$extension"
+	echo "desea ejecutar el cambio de nombre"
+	read ejecutar
+	if [ $ejecutar == "si" ];then
+		mv "$1" "$normalizado" 
+	fi
+	
 }
 
 
