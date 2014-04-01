@@ -48,8 +48,45 @@ function normalizarNombre(){
 #salvo la extensión.
 	extension=$(echo "$1"| rev | awk -F "." '{print $1}' | rev)
 	echo $extension
-	nombre=$(echo "$1" | rev | awk -F "." '{$1="";print}' | rev )
-	echo $nombre
+	nombre=$(echo "$1" | rev | awk -F "." '{$1="";print}' | rev)
+	nombre=$(echo "$nombre"| tr  " *-./]/[" _)
+	nombre=$(echo "$nombre"|sed -e 's/__*/_/g')
+	nombre=$(echo "$nombre"|sed -e 's/_$//g')
+	echo "$nombre"
+	continuar="si"
+	C=1
+	normalizado=""
+	ncolumnas=$(echo $nombre|awk -F "_" '{print NF}')
+	if [ $ncolumnas -gt 1 ];then
+		while [[ "$continuar" == "si" && $C -le $ncolumnas ]];do
+			parte=""
+			parte=$(echo $nombre | awk -F "_" '{print $columna}' "columna=$C")
+			echo $parte 
+			echo "Desea mantener esta columna??"
+			read columnas
+			if [ $columnas == "si" ]; then
+				normalizado+="$parte"
+				normalizado+="_"
+				#echo $normalizado
+			fi
+			C=$(($C + 1))
+			if [ $C -lt $ncolumnas ];then
+				echo "Desea continuar??"
+				read continuar
+			fi
+		done
+		normalizado=$(echo "$normalizado"|sed -e 's/_$//g')
+	else
+		normalizado=$nombre
+	fi
+	normalizado="$normalizado.$extension"
+	echo "resultado final: $normalizado"
+	echo "desea ejecutar el cambio de nombre"
+	read ejecutar
+	if [ $ejecutar == "si" ];then
+		mv "$1" "$normalizado" 
+	fi
+	
 }
 
 echo "Desea Sacar las Peliculas de los Directorios??"
@@ -68,34 +105,29 @@ if [ $respuestav = si ];then
 		fi
 	done	
 fi
+echo "Desea tratar los nombres de las películas"
+read respuestav
+if [ $respuestav == "si" ];then
+	for F in *
+	do
+		echo $F
+		if [ ! -d "$F" ];then
+			echo "Desea tratar este nombre?"
+			read tnombre
+			if [ $tnombre == "si" ];then
+				normalizarNombre "$F"
+			fi
+		fi
+	done
+fi
 
-echo "Desea Trabajar los nombres de las peliculas"
+echo "Desea organizar las peiculas por directorios"
 read respuestav
 if [ $respuestav = si ];then
 	for F in *
 	do
-		echo $F
-		nombre="$F"
 		if [ ! -d "$F" ];then
-
-			extension=$(echo "$nombre"| rev | awk -F "." '{ print $1 }' | rev)
-			
-
-			sinextension=$(echo "$nombre" | rev | awk -F "." '{$1="";print}'|rev)
-			sinextension="$(echo "$sinextension" | sed -e 's/.*\[.*\]//')"
-			nombre="$(echo "$sinextension"| tr  " *-." _).$extension"
-			echo "-----------"
-			echo "nombre original $F"
-			echo "nombre modificado "$nombre""
-			echo "¿Desea Modificar el archivo? si/no"
-			echo "-----------"
-			read respuesta
-			if [ $respuesta = si ];then
-				echo "modifico"
-				mv "$F" "$nombre"
-			else
-				echo "no modifico"
-			fi
+			echo $F
 			Clasificacion=(ACCION BELICA CFICCION COMEDIA DIBUJOS DOCUMENTAL ESPAÑOLA LUCHA MALA NUEVA PINTURA POLICIACA ROMANTICA SUPERHEROES TERROR WESTERN ESPIAS DRAMA)
 			echo " Desea moverlo a algun directorio ?"
 			read respuestad
