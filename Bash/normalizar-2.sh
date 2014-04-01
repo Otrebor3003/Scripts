@@ -128,7 +128,7 @@ if [ $respuestav = si ];then
 	do
 		if [ ! -d "$F" ];then
 			echo $F
-			Clasificacion=(ACCION BELICA CFICCION COMEDIA DIBUJOS DOCUMENTAL ESPAÑOLA LUCHA MALA NUEVA PINTURA POLICIACA ROMANTICA SUPERHEROES TERROR WESTERN ESPIAS DRAMA)
+			Clasificacion=(ACCION BELICA CFICCION COMEDIA DIBUJOS DOCUMENTAL ESPAÑOLA LUCHA MALA NUEVA PINTURA POLICIACA ROMANTICA SUPERHEROES TERROR WESTERN ESPIAS DRAMA ROMANOS TUTORIALES PARACLASIFICAR)
 			echo " Desea moverlo a algun directorio ?"
 			read respuestad
 			if [ $respuestad = si ];then
@@ -144,7 +144,7 @@ if [ $respuestav = si ];then
 				echo "Seleccione el Directorio Destino"
 				read tipo
 				let tipo--
-				echo mv "$F" "${Clasificacion[$tipo]}"
+				mv "$F" "${Clasificacion[$tipo]}"
 
 			else
 				echo "no modifico el directorio"
